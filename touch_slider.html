@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Touch Slider</title>
+    <style>
+        #mainBtn {
+            position: absolute;
+            padding: 5px 10px;
+            background-color: lightgreen;
+        }
+    </style>
+</head>
+<body>
+    <button id="mainBtn"
+        ontouchstart="onStart(event)"
+        ontouchmove="onMove(event)"
+        ontouchend="onEnd(event)"
+        onmousedown="onDown(event)"
+        onmouseup="onUp(event)">Slide me
+    </button >
+    <!-- Touch & Drag Functionality -->
+    <script>
+        const mainBtn = {
+            element: document.querySelector('#mainBtn'),
+            x: document.querySelector('#mainBtn').style.left,
+            y: document.querySelector('#mainBtn').style.top
+        };
+        const touchLocation = {
+            x: 0,
+            y: 0
+        };
+        const startLocation = {
+            x: 0,
+            y: 0
+        };
+
+        function onStart(event) {
+            touchLocation.x = event.touches[0].clientX;
+            touchLocation.y = event.touches[0].clientY;
+            startLocation.x = event.touches[0].clientX;
+            startLocation.y = event.touches[0].clientY;
+        }
+
+        function onMove(event) {
+            event.preventDefault();
+
+            // Left & Right Movement Detection
+            const clientX = event.touches[0].clientX;
+            const left = parseInt(mainBtn.x + clientX - startLocation.x);
+            mainBtn.element.style.left =  left + "px";
+            touchLocation.x = clientX;
+
+            // Up & Down Movement Detection
+            const clientY = event.touches[0].clientY;
+            const top = parseInt(mainBtn.y + clientY - startLocation.y);
+            mainBtn.element.style.top =  top + "px";
+            touchLocation.y = clientY;
+        }
+
+        function onEnd(event) {
+            mainBtn.x = parseInt(mainBtn.element.style.left.split('px')[0]);
+            mainBtn.y = parseInt(mainBtn.element.style.top.split('px')[0]);
+        }
+    </script>
+    <!-- Mouse Click & Drag Functionality -->
+    <script>
+        let clicked = false;
+        function onDown(event) {
+            event.preventDefault();
+            touchLocation.x = event.clientX;
+            touchLocation.y = event.clientY;
+            startLocation.x = event.clientX;
+            startLocation.y = event.clientY;
+            clicked = true;
+        }
+
+        document.addEventListener('mousemove', function(event) {
+            event.preventDefault();
+            if(clicked) {
+                onDrag(event);
+            }
+        });
+
+        function onDrag(event) {
+            // Left & Right Movement Detection
+            const clientX = event.clientX;
+            const left = parseInt(mainBtn.x + clientX - startLocation.x);
+            mainBtn.element.style.left =  left + "px";
+            touchLocation.x = clientX;
+
+            // Up & Down Movement Detection
+            const clientY = event.clientY;
+            const top = parseInt(mainBtn.y + clientY - startLocation.y);
+            mainBtn.element.style.top =  top + "px";
+            touchLocation.y = clientY;
+        }
+
+        function onUp(event) {
+            event.preventDefault();
+            clicked = false;
+            mainBtn.x = parseInt(mainBtn.element.style.left.split('px')[0]);
+            mainBtn.y = parseInt(mainBtn.element.style.top.split('px')[0]);
+        }
+    </script>
+</body>
+</html>
